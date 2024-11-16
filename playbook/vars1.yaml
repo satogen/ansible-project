@@ -1,0 +1,41 @@
+- name: Setup nginx server on myserver list
+  hosts:
+   - devservers
+  become: True
+  vars:
+    html_path: /usr/share/nginx/html/
+
+  tasks:
+    - name: Install the latest version of nginx 
+      command: amazon-linux-extras install nginx1 -y
+
+    - name: Start Nginx
+      service:
+        name: nginx
+        state: started
+
+    - name: Enable service httpd, and not touch the state
+      service:
+        name: nginx
+        enabled: yes
+
+    - name: Check Nginx Version
+      command: nginx -v
+
+    - name: Install the latest version of nginx 
+      command: systemctl status nginx
+    
+    - name: Ansible copy file to remote server
+      copy:
+        content: |
+          <html>
+          <head>
+          <meta charset="utf-8">
+          <title>タイトル</title>
+          </head>
+          <body>
+          <h1>コンテンツを指定</h1>
+          </body>
+          </html>
+        dest: "{{ html_path }}index.html"
+
