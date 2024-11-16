@@ -1,0 +1,31 @@
+- name: Setup nginx server on myserver list
+  hosts:
+   - devservers
+   - testservers
+  become: True
+
+  tasks:
+    - name: Install the latest version of nginx 
+      command: amazon-linux-extras install nginx1 -y
+
+    - name: Start Nginx
+      service:
+        name: nginx
+        state: started
+
+    - name: Enable service httpd, and not touch the state
+      service:
+        name: nginx
+        enabled: yes
+
+    - name: Check Nginx Version
+      command: nginx -v
+
+    - name: Install the latest version of nginx 
+      command: systemctl status nginx
+    
+    - name: Copy files from master server
+      copy: 
+        src: "/home/ec2-user/index.html"
+        dest: "/usr/share/nginx/html/"
+
